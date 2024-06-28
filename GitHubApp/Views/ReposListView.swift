@@ -23,61 +23,55 @@ struct ReposListView: View {
     }
     
     var body: some View {
-        ZStack {
-            NavigationStack {
-                VStack {
-                    if !viewModel.isLoading && filteredRepos.isEmpty && searchTerm == "" {
-                        ContentUnavailableView(label: {
-                            VStack {
-                                Image(systemName: "person.2").font(.system(size: 50))
-                                Text("No repos").font(.title2)
-                            }
-                        }, description: {
-                            Text("Please try to refresh the data.")
-                        }, actions: {
-                            Button {
-                                Task {
-                                    await loadData()
-                                }
-                            } label: {
-                                Text("Refresh")
-                            }
-                            .buttonStyle(.borderedProminent)
-                        })
-                    }
-                    else if !viewModel.isLoading {
-                        List(filteredRepos, id: \.id) { repo in
-                            NavigationLink {
-//                                UserView(userLogin: user.login)
-//                                    .navigationBarTitle(user.login, displayMode: .inline)
-                            } label: {
-//                                UserListItemView(user: user)
-                                Text(repo.name)
-                            }
-                        }
-                        .searchable(text: $searchTerm)
-                        .refreshable {
-                            await loadData()
-                        }
-                        .overlay {
-                            if filteredRepos.isEmpty {
-                                ContentUnavailableView.search(text: searchTerm)
-                            }
-                        }
-                    }
+        NavigationStack {
+            List(filteredRepos, id: \.id) { repo in
+                NavigationLink {
+
+                } label: {
+                    RepoListItemView(repo: repo)
                 }
-                .navigationTitle("Repositories")
             }
-            .task {
+            .searchable(text: $searchTerm)
+            .refreshable {
                 await loadData()
             }
-            .alert(isPresented: $viewModel.shouldShowErrorAlert) {
-                return Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""))
+            .overlay {
+                if !viewModel.isLoading && filteredRepos.isEmpty && searchTerm == "" {
+                    ContentUnavailableView(label: {
+                        VStack {
+                            Image(systemName: "folder").font(.system(size: 50))
+                            Text("No repos").font(.title2)
+                        }
+                    }, description: {
+                        Text("Please try to refresh the data.")
+                    }, actions: {
+                        Button {
+                            Task {
+                                await loadData()
+                            }
+                        } label: {
+                            Text("Refresh")
+                        }
+                        .buttonStyle(.borderedProminent)
+                    })
+                }
+                else if !viewModel.isLoading && filteredRepos.isEmpty {
+                    ContentUnavailableView.search(text: searchTerm)
+                }
+                
+                if viewModel.isLoading {
+                    ProgressView().controlSize(.large)
+                }
             }
-            
-            if viewModel.isLoading {
-                ProgressView().controlSize(.large)
+            .navigationTitle("Repositories")
+        }
+        .onAppear {
+            Task {
+                await loadData()
             }
+        }
+        .alert(isPresented: $viewModel.shouldShowErrorAlert) {
+            return Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""))
         }
     }
 }

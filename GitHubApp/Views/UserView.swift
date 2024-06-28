@@ -10,6 +10,10 @@ import SwiftUI
 struct UserView: View {
     let userLogin: String
     @State private var viewModel = ViewModel()
+    
+    func loadData() async {
+        await viewModel.getUser(userLogin: userLogin)
+    }
 
     var body: some View {
         List {
@@ -107,8 +111,13 @@ struct UserView: View {
             }
         }
         .padding(.top, -20)
-        .task {
-            await viewModel.getUser(userLogin: userLogin)
+        .refreshable {
+            await loadData()
+        }
+        .onAppear {
+            Task {
+                await loadData()
+            }
         }
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             return Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""))

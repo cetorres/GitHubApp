@@ -21,15 +21,17 @@ struct ProfileView: View {
                 }
                 .navigationTitle("Profile")
                 .navigationBarTitleDisplayMode(.inline)
-                .alert("Log out", isPresented: $shouldShowAlert,
-                    actions: {
-                    Button("Yes", action: {
-                        loginViewModel.logOut()
-                    })
-                    Button("No", role: .cancel, action: {})
-                }, message: {
-                    Text("Confirm logging out?")
-                })
+                .actionSheet(isPresented: $shouldShowAlert) {
+                    ActionSheet(
+                        title: Text("Confirm logging out?"),
+                        buttons: [
+                            .destructive(Text("Yes")) {
+                                loginViewModel.logOut()
+                            },
+                            .cancel(Text("No"))
+                        ]
+                    )
+                }
         }
     }
 }
