@@ -8,55 +8,21 @@
 import Foundation
 
 final class GitHubWebService {
-    static func getFollowers(userLogin: String) async throws -> [GitHubFollower] {
-        let endpoint = "https://api.github.com/users/\(userLogin)/followers"
-        
-        guard let url = URL(string: endpoint) else {
-            throw GitHubError.invalidURL
-        }
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw GitHubError.invalidResponse
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            return try decoder.decode([GitHubFollower].self, from: data)
-        } catch {
-            print(error.localizedDescription)
-            throw GitHubError.invalidData
-        }
+    static var shared = GitHubWebService()
+    
+    func getFollowers(userLogin: String) async throws -> [GitHubFollower] {
+        return try await self.doGetRequest(endpoint: "https://api.github.com/users/\(userLogin)/followers")
     }
     
-    static func getUser(userLogin: String) async throws -> GitHubUser {
-        let endpoint = "https://api.github.com/users/\(userLogin)"
-        
-        guard let url = URL(string: endpoint) else {
-            throw GitHubError.invalidURL
-        }
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw GitHubError.invalidResponse
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            return try decoder.decode(GitHubUser.self, from: data)
-        } catch {
-            print(error.localizedDescription)
-            throw GitHubError.invalidData
-        }
+    func getUser(userLogin: String) async throws -> GitHubUser {
+        return try await self.doGetRequest(endpoint: "https://api.github.com/users/\(userLogin)")
     }
     
-    static func getRepos(userLogin: String) async throws -> [GitHubRepo] {
-        let endpoint = "https://api.github.com/users/\(userLogin)/repos"
-        
+    func getRepos(userLogin: String) async throws -> [GitHubRepo] {
+        return try await self.doGetRequest(endpoint: "https://api.github.com/users/\(userLogin)/repos")
+    }
+
+    private func doGetRequest<T:Codable>(endpoint: String) async throws -> T {
         guard let url = URL(string: endpoint) else {
             throw GitHubError.invalidURL
         }
@@ -70,7 +36,7 @@ final class GitHubWebService {
         do {
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-            return try decoder.decode([GitHubRepo].self, from: data)
+            return try decoder.decode(T.self, from: data)
         } catch {
             print(error.localizedDescription)
             throw GitHubError.invalidData

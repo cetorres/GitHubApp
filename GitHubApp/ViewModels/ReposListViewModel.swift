@@ -18,7 +18,7 @@ extension ReposListView {
         func getRepos(userLogin: String) async {
             self.isLoading = true
             do {
-                let repos = try await GitHubWebService.getRepos(userLogin: userLogin)
+                let repos = try await GitHubWebService.shared.getRepos(userLogin: userLogin)
                 self.repos = repos
                 self.isLoading = false
             } catch (let error as GitHubError) {

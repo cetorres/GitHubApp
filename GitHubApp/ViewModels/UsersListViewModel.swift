@@ -18,7 +18,7 @@ extension UsersListView {
         func getFollowers(userLogin: String) async {
             self.isLoading = true
             do {
-                let followers = try await GitHubWebService.getFollowers(userLogin: userLogin)
+                let followers = try await GitHubWebService.shared.getFollowers(userLogin: userLogin)
                 self.followers = followers
                 self.isLoading = false
             } catch (let error as GitHubError) {

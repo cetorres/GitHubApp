@@ -18,7 +18,7 @@ extension UserView {
         func getUser(userLogin: String) async {
             self.isLoading = true
             do {
-                let user = try await GitHubWebService.getUser(userLogin: userLogin)
+                let user = try await GitHubWebService.shared.getUser(userLogin: userLogin)
                 self.user = user
             } catch (let error as GitHubError) {
                 print(error.errorDescription)
