@@ -20,14 +20,21 @@ final class GitHubAppTests: XCTestCase {
     
     func testWebServiceGetUser() async throws {
         let userLogin = "cetorres"
-        let user = try await GitHubWebService.getUser(userLogin: userLogin)
+        let user = try await GitHubWebService.shared.getUser(userLogin: userLogin)
         XCTAssertEqual(user.login, userLogin)
     }
 
     func testWebServiceGetFollowers() async throws {
         let userLogin = "cetorres"
         let followerLogin = "ribeiro"
-        let followers = try await GitHubWebService.getFollowers(userLogin: userLogin)
+        let followers = try await GitHubWebService.shared.getFollowers(userLogin: userLogin)
         XCTAssertTrue(followers.contains(where: { $0.login.lowercased() == followerLogin }))
+    }
+    
+    func testWebServiceGetRepos() async throws {
+        let userLogin = "cetorres"
+        let repoName = "cetorres"
+        let repos = try await GitHubWebService.shared.getRepos(userLogin: userLogin)
+        XCTAssertTrue(repos.contains(where: { $0.name.lowercased() == repoName }))
     }
 }
