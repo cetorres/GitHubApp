@@ -29,7 +29,15 @@ final class GitHubWebService {
         
         let (data, response) = try await URLSession.shared.data(from: url)
         
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+        if let response = response as? HTTPURLResponse {
+            if response.statusCode == 404 {
+                throw GitHubError.resourceNotFound
+            }
+            else if response.statusCode != 200 {
+                throw GitHubError.invalidResponse
+            }
+        }
+        else {
             throw GitHubError.invalidResponse
         }
         
