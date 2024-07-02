@@ -21,8 +21,8 @@ struct GitHubRepo: Codable {
     let watchersCount: Int
     let watchers: Int
     let forksCount: Int
-    let createdAt: String?
-    let updatedAt: String?
+    let createdAt: Date
+    let updatedAt: Date
 }
 
-let testRepo = GitHubRepo(id: 1, name: "test-repo", fullName: "user/test-repo", description: "This is a test repo", url: "", htmlUrl: "", homepage: "", language: "JavaScript", defaultBranch: "main", stargazersCount: 0, watchersCount: 0, watchers: 3, forksCount: 0, createdAt: "", updatedAt: "")
+let testRepo = GitHubRepo(id: 1, name: "test-repo", fullName: "user/test-repo", description: "This is a test repo", url: "", htmlUrl: "", homepage: "", language: "JavaScript", defaultBranch: "main", stargazersCount: 0, watchersCount: 0, watchers: 3, forksCount: 0, createdAt: Date(), updatedAt: Date())

@@ -30,9 +30,9 @@ struct GitHubUser: Codable {
     let twitterUsername: String?
     let followers: Int?
     let following: Int?
-    let createdAt: String?
-    let updatedAt: String?
+    let createdAt: Date
+    let updatedAt: Date
 }
 
 let testFollower = GitHubFollower(login: "test", id: 1, avatarUrl: "", url: "", htmlUrl: "")
-let testUser = GitHubUser(login: "test", id: 1, avatarUrl: "", url: "", htmlUrl: "", bio: "This is a test user.", name: "Test User", company: "Another Company", blog: "", location: "USA", email: "", twitterUsername: "", followers: 0, following: 0, createdAt: "", updatedAt: "")
+let testUser = GitHubUser(login: "test", id: 1, avatarUrl: "", url: "", htmlUrl: "", bio: "This is a test user.", name: "Test User", company: "Another Company", blog: "", location: "USA", email: "", twitterUsername: "", followers: 0, following: 0, createdAt: Date(), updatedAt: Date())

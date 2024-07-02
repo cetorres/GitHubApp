@@ -9,17 +9,17 @@ import SwiftUI
 
 @main
 struct GitHubApp: App {
-    @StateObject var loginViewModel = LoginViewModel()
+    @State var userState = UserState()
     
     var body: some Scene {
         WindowGroup {
-            if loginViewModel.userLogin != "" {
+            if userState.isUserLoggedIn {
                 MainTabView()
             }
             else {
                 LoginView()
             }
         }
-        .environmentObject(loginViewModel)
+        .environment(userState)
     }
 }

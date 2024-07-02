@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct UsersListView: View {
+    @Environment(UserState.self) var userState
+    
     @State private var viewModel = ViewModel()
-    @EnvironmentObject var loginViewModel: LoginViewModel
     @State private var shouldShowUserAlert = false
     @State private var shouldShowUserSheet = false
     @State private var searchTerm = ""
+    
     var filteredFollowers: [GitHubFollower] {
         guard !searchTerm.isEmpty else { return viewModel.followers ?? [] }
         return viewModel.followers != nil ? viewModel.followers!.filter { $0.login.localizedCaseInsensitiveContains(searchTerm) } : []
     }
     
     func loadData() async {
-        await viewModel.getFollowers(userLogin: loginViewModel.userLogin.lowercased())
+        await viewModel.getFollowers(userLogin: userState.userLogin.lowercased())
     }
     
     var body: some View {
@@ -79,5 +81,5 @@ struct UsersListView: View {
 
 #Preview {
     UsersListView()
-        .environmentObject(LoginViewModel())
+        .environment(UserState())
 }

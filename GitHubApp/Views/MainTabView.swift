@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @EnvironmentObject var loginViewModel: LoginViewModel
+    @Environment(UserState.self) var userState
     
     var body: some View {
         TabView {
@@ -25,11 +25,11 @@ struct MainTabView: View {
                     Label("Profile", systemImage: "person")
                 }
         }
-        .environmentObject(loginViewModel)
+        .environment(userState)
     }
 }
 
 #Preview {
     MainTabView()
-        .environmentObject(LoginViewModel())
+        .environment(UserState())
 }

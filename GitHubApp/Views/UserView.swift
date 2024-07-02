@@ -87,7 +87,7 @@ struct UserView: View {
                 }
                 if let twitterUsername = viewModel.user?.twitterUsername {
                     HStack {
-                        Text("Twitter (X)").bold()
+                        Text("X profile").bold()
                         Spacer()
                         Link(twitterUsername.lowercased(), destination: URL(string: "https://twitter.com/\(twitterUsername.lowercased())")!)
                     }
@@ -106,6 +106,22 @@ struct UserView: View {
                         Text("Profile").bold()
                         Spacer()
                         Link(htmlUrl.lowercased(), destination: URL(string: htmlUrl.lowercased())!)
+                    }
+                }
+                
+                if let createdAt = viewModel.user?.createdAt {
+                    HStack {
+                        Text("Created").bold()
+                        Spacer()
+                        Text(createdAt.formatted(date: .abbreviated, time: .omitted))
+                    }
+                }
+                
+                if let updatedAt = viewModel.user?.updatedAt {
+                    HStack {
+                        Text("Last updated").bold()
+                        Spacer()
+                        Text(updatedAt.formatted(date: .abbreviated, time: .omitted))
                     }
                 }
             }

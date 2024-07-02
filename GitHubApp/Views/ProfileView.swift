@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @EnvironmentObject var loginViewModel: LoginViewModel
+    @Environment(UserState.self) var userState
     @State private var shouldShowAlert = false
     
     var body: some View {
         NavigationStack {
-            UserView(userLogin: loginViewModel.userLogin)
+            UserView(userLogin: userState.userLogin)
                 .toolbar {
                     Button("Log out") {
                         shouldShowAlert = true
@@ -26,7 +26,7 @@ struct ProfileView: View {
                         title: Text("Confirm logging out?"),
                         buttons: [
                             .destructive(Text("Yes")) {
-                                loginViewModel.logOut()
+                                userState.logOut()
                             },
                             .cancel(Text("No"))
                         ]
@@ -38,5 +38,5 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView()
-        .environmentObject(LoginViewModel())
+        .environment(UserState())
 }

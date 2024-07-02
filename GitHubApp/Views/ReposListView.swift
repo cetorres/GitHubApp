@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ReposListView: View {
     @State private var viewModel = ViewModel()
-    @EnvironmentObject var loginViewModel: LoginViewModel
+    @Environment(UserState.self) var userState
     @State private var shouldShowUserAlert = false
     @State private var shouldShowUserSheet = false
     @State private var searchTerm = ""
@@ -19,7 +19,7 @@ struct ReposListView: View {
     }
     
     func loadData() async {
-        await viewModel.getRepos(userLogin: loginViewModel.userLogin.lowercased())
+        await viewModel.getRepos(userLogin: userState.userLogin.lowercased())
     }
     
     var body: some View {
@@ -78,5 +78,5 @@ struct ReposListView: View {
 
 #Preview {
     ReposListView()
-        .environmentObject(LoginViewModel())
+        .environment(UserState())
 }

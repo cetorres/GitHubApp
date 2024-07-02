@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct LoginView: View {
-    @EnvironmentObject var loginViewModel: LoginViewModel
+    @Environment(UserState.self) var userState
     @State private var userLogin: String = ""
+    @State private var shouldShowAlert = false
 
     var body: some View {
         
@@ -31,7 +32,18 @@ struct LoginView: View {
             
             Button {
                 if userLogin != "" {
-                    loginViewModel.saveUserLogin(userLogin)
+                    Task {
+                        let userExists = await userState.userExists(userLogin)
+                        if userExists {
+                            userState.setUserLogin(userLogin)
+                        }
+                        else {
+                            shouldShowAlert = true
+                        }
+                    }
+                }
+                else {
+                    shouldShowAlert = true
                 }
             } label: {
                 Text("Confirm")
@@ -40,9 +52,13 @@ struct LoginView: View {
             .buttonStyle(.borderedProminent)
             .padding(.horizontal, 16)
         }
+        .alert(isPresented: $shouldShowAlert) {
+            return Alert(title: Text("Login Error"), message: Text("Please enter a valid user login."))
+        }
     }
 }
 
 #Preview {
     LoginView()
+        .environment(UserState())
 }
