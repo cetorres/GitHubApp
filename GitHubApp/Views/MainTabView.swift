@@ -13,27 +13,48 @@ enum Tab {
 
 struct MainTabView: View {
     @Environment(UserState.self) var userState
-    @State private var selection = Tab.repos
+    @State private var selectedTab = Tab.repos
+    @State private var reposStack = NavigationPath()
+    @State private var followersStack = NavigationPath()
+    @State private var profileStack = NavigationPath()
     
     var body: some View {
-        TabView(selection: $selection) {
-            ReposListView()
+        TabView(selection: tabSelection) {
+            ReposListView(path: $reposStack)
                 .tabItem {
                     Label("Repos", systemImage: "folder")
                 }
                 .tag(Tab.repos)
-            UsersListView()
+
+            UsersListView(path: $followersStack)
                 .tabItem {
                     Label("Followers", systemImage: "person.2")
                 }
                 .tag(Tab.followers)
-            ProfileView()
+
+            ProfileView(path: $profileStack)
                 .tabItem {
                     Label("Profile", systemImage: "person")
                 }
                 .tag(Tab.profile)
+
         }
         .environment(userState)
+    }
+    
+    var tabSelection: Binding<Tab> {
+        return .init {
+            return selectedTab
+        } set: { newValue in
+            if newValue == selectedTab {
+                switch newValue {
+                case .repos: reposStack = NavigationPath()
+                case .followers: followersStack = NavigationPath()
+                case .profile: profileStack = NavigationPath()
+                }
+            }
+            selectedTab = newValue
+        }
     }
 }
 

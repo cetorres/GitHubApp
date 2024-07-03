@@ -9,10 +9,11 @@ import SwiftUI
 
 struct ProfileView: View {
     @Environment(UserState.self) var userState
+    @Binding var path: NavigationPath
     @State private var shouldShowAlert = false
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             UserView(userLogin: userState.userLogin)
                 .toolbar {
                     Button("Log out") {
@@ -37,6 +38,6 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(path: .constant(NavigationPath()))
         .environment(UserState())
 }

@@ -10,6 +10,8 @@ import SwiftUI
 struct UsersListView: View {
     @Environment(UserState.self) var userState
     
+    @Binding var path: NavigationPath
+    
     @State private var viewModel = ViewModel()
     @State private var shouldShowUserAlert = false
     @State private var shouldShowUserSheet = false
@@ -25,15 +27,16 @@ struct UsersListView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List(filteredFollowers, id: \.id) { user in
-                NavigationLink {
-                    UserView(userLogin: user.login)
-                        .navigationBarTitle(user.login, displayMode: .inline)
-                } label: {
+                NavigationLink(value: user) {
                     UserListItemView(user: user)
                 }
             }
+            .navigationDestination(for: GitHubFollower.self, destination: { user in
+                UserView(userLogin: user.login)
+                    .navigationBarTitle(user.login, displayMode: .inline)
+            })
             .searchable(text: $searchTerm)
             .refreshable {
                 await loadData()
@@ -80,6 +83,6 @@ struct UsersListView: View {
 }
 
 #Preview {
-    UsersListView()
+    UsersListView(path: .constant(NavigationPath()))
         .environment(UserState())
 }

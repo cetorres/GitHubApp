@@ -10,9 +10,13 @@ import SwiftUI
 struct ReposListView: View {
     @State private var viewModel = ViewModel()
     @Environment(UserState.self) var userState
+    
+    @Binding var path: NavigationPath
+    
     @State private var shouldShowUserAlert = false
     @State private var shouldShowUserSheet = false
     @State private var searchTerm = ""
+    
     var filteredRepos: [GitHubRepo] {
         guard !searchTerm.isEmpty else { return viewModel.repos ?? [] }
         return viewModel.repos != nil ? viewModel.repos!.filter { $0.name.localizedCaseInsensitiveContains(searchTerm) } : []
@@ -23,14 +27,20 @@ struct ReposListView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List(filteredRepos, id: \.id) { repo in
-                NavigationLink {
-
-                } label: {
+                NavigationLink(value: repo) {
                     RepoListItemView(repo: repo)
                 }
             }
+            .navigationDestination(for: GitHubRepo.self, destination: { repo in
+                VStack {
+                    Text(repo.name)
+                    Text(repo.description ?? "")
+                }
+                .padding()
+                .navigationBarTitle(repo.name, displayMode: .inline)
+            })
             .searchable(text: $searchTerm)
             .refreshable {
                 await loadData()
@@ -77,6 +87,6 @@ struct ReposListView: View {
 }
 
 #Preview {
-    ReposListView()
+    ReposListView(path: .constant(NavigationPath()))
         .environment(UserState())
 }
