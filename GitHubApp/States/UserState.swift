@@ -11,6 +11,7 @@ import Observation
 @Observable
 final class UserState {
     private(set) var userLogin: String = ""
+    var isLoading = false
     var isUserLoggedIn: Bool {
         return userLogin != ""
     }
@@ -32,15 +33,19 @@ final class UserState {
     }
     
     func userExists(_ userLogin: String) async -> Bool {
+        isLoading = true
         do {
             let _ = try await GitHubWebService.shared.getUser(userLogin: userLogin)
+            isLoading = false
             return true
         }
         catch (let error as GitHubError) {
             print(error.errorDescription)
+            isLoading = false
             return false
         } catch {
             print(error.localizedDescription)
+            isLoading = false
             return false
         }
     }

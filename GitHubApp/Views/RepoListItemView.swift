@@ -42,20 +42,11 @@ struct RepoListItemView: View {
                                 .font(.caption)
                                 .foregroundColor(.accentColor)
                             Text(createdAt.formatted(date: .abbreviated, time: .omitted))
-                                .font(.caption)
+                                .font(.subheadline)
                         }
                     }
                 }
             }
-            
-//            if let createdAt = repo?.createdAt {
-//                Spacer()
-//                VStack(alignment: .trailing) {
-//                    Image(systemName: "clock")
-//                    Text(createdAt.formatted(date: .numeric, time: .omitted))
-//                        .font(.caption)
-//                }
-//            }
         }
     }
 }
