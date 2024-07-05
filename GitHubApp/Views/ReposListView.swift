@@ -12,6 +12,7 @@ struct ReposListView: View {
     @Environment(UserState.self) var userState
     
     @Binding var path: NavigationPath
+    @Binding var scrollToTop: Bool
     
     @State private var shouldShowUserAlert = false
     @State private var shouldShowUserSheet = false
@@ -28,19 +29,30 @@ struct ReposListView: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            List(filteredRepos, id: \.id) { repo in
-                NavigationLink(value: repo) {
-                    RepoListItemView(repo: repo)
+            ScrollViewReader { proxy in
+                List(filteredRepos, id: \.id) { repo in
+                    NavigationLink(value: repo) {
+                        RepoListItemView(repo: repo)
+                    }
+                    .id(repo.id)
+                }
+                .navigationDestination(for: GitHubRepo.self, destination: { repo in
+                    VStack {
+                        Text(repo.name)
+                        Text(repo.description ?? "")
+                    }
+                    .padding()
+                    .navigationBarTitle(repo.name, displayMode: .inline)
+                })
+                .onChange(of: scrollToTop) { _, newState in
+                    if newState {
+                        withAnimation {
+                            proxy.scrollTo(filteredRepos.first?.id, anchor: .top)
+                        }
+                        scrollToTop = false
+                    }
                 }
             }
-            .navigationDestination(for: GitHubRepo.self, destination: { repo in
-                VStack {
-                    Text(repo.name)
-                    Text(repo.description ?? "")
-                }
-                .padding()
-                .navigationBarTitle(repo.name, displayMode: .inline)
-            })
             .searchable(text: $searchTerm)
             .refreshable {
                 await loadData()
@@ -87,6 +99,6 @@ struct ReposListView: View {
 }
 
 #Preview {
-    ReposListView(path: .constant(NavigationPath()))
+    ReposListView(path: .constant(NavigationPath()), scrollToTop: .constant(false))
         .environment(UserState())
 }

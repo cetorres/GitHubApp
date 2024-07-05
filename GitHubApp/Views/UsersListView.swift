@@ -11,6 +11,7 @@ struct UsersListView: View {
     @Environment(UserState.self) var userState
     
     @Binding var path: NavigationPath
+    @Binding var scrollToTop: Bool
     
     @State private var viewModel = ViewModel()
     @State private var shouldShowUserAlert = false
@@ -28,15 +29,26 @@ struct UsersListView: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            List(filteredFollowers, id: \.id) { user in
-                NavigationLink(value: user) {
-                    UserListItemView(user: user)
+            ScrollViewReader { proxy in
+                List(filteredFollowers, id: \.id) { user in
+                    NavigationLink(value: user) {
+                        UserListItemView(user: user)
+                    }
+                    .id(user.id)
+                }
+                .navigationDestination(for: GitHubFollower.self, destination: { user in
+                    UserView(userLogin: user.login)
+                        .navigationBarTitle(user.login, displayMode: .inline)
+                })
+                .onChange(of: scrollToTop) { _, newState in
+                    if newState {
+                        withAnimation {
+                            proxy.scrollTo(filteredFollowers.first?.id, anchor: .top)
+                        }
+                        scrollToTop = false
+                    }
                 }
             }
-            .navigationDestination(for: GitHubFollower.self, destination: { user in
-                UserView(userLogin: user.login)
-                    .navigationBarTitle(user.login, displayMode: .inline)
-            })
             .searchable(text: $searchTerm)
             .refreshable {
                 await loadData()
@@ -83,6 +95,6 @@ struct UsersListView: View {
 }
 
 #Preview {
-    UsersListView(path: .constant(NavigationPath()))
+    UsersListView(path: .constant(NavigationPath()), scrollToTop: .constant(false))
         .environment(UserState())
 }

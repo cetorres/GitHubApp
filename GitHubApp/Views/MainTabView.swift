@@ -17,16 +17,18 @@ struct MainTabView: View {
     @State private var reposStack = NavigationPath()
     @State private var followersStack = NavigationPath()
     @State private var profileStack = NavigationPath()
+    @State private var scrollReposToTop = false
+    @State private var scrollFollowersToTop = false
     
     var body: some View {
         TabView(selection: tabSelection) {
-            ReposListView(path: $reposStack)
+            ReposListView(path: $reposStack, scrollToTop: $scrollReposToTop)
                 .tabItem {
                     Label("Repos", systemImage: "folder")
                 }
                 .tag(Tab.repos)
 
-            UsersListView(path: $followersStack)
+            UsersListView(path: $followersStack, scrollToTop: $scrollFollowersToTop)
                 .tabItem {
                     Label("Followers", systemImage: "person.2")
                 }
@@ -48,8 +50,18 @@ struct MainTabView: View {
         } set: { newValue in
             if newValue == selectedTab {
                 switch newValue {
-                case .repos: reposStack = NavigationPath()
-                case .followers: followersStack = NavigationPath()
+                case .repos:
+                    if reposStack.isEmpty {
+                        scrollReposToTop = true
+                    }
+                    reposStack = NavigationPath()
+                    break
+                case .followers:
+                    if followersStack.isEmpty {
+                        scrollFollowersToTop = true
+                    }
+                    followersStack = NavigationPath()
+                    break
                 case .profile: profileStack = NavigationPath()
                 }
             }
