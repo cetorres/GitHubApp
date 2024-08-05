@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct UserView: View {
+    @Environment(UserState.self) var userState
     let userLogin: String
     @State private var viewModel = ViewModel()
     
@@ -16,6 +17,7 @@ struct UserView: View {
     }
 
     var body: some View {
+        @Bindable var userState = userState
         List {
             Section {
                 VStack {
@@ -125,6 +127,16 @@ struct UserView: View {
                     }
                 }
             }
+            
+            if userState.userLogin == userLogin {
+                Section("Settings") {
+                    Picker("Appearance", selection: $userState.appearance) {
+                        Text("System").tag("")
+                        Text("Light").tag("light")
+                        Text("Dark").tag("dark")
+                    }
+                }
+            }
         }
         .padding(.top, -20)
         .refreshable {
@@ -138,9 +150,11 @@ struct UserView: View {
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             return Alert(title: Text("Error"), message: Text(viewModel.errorMessage ?? ""))
         }
+        .preferredColorScheme(userState.appearance == "dark" ? .dark : userState.appearance == "light" ? .light : nil)
     }
 }
 
 #Preview {
     UserView(userLogin: "cetorres")
+        .environment(UserState())
 }

@@ -15,9 +15,11 @@ struct GitHubApp: App {
         WindowGroup {
             if userState.isUserLoggedIn {
                 MainTabView()
+                    .preferredColorScheme(userState.appearance == "dark" ? .dark : userState.appearance == "light" ? .light : nil)
             }
             else {
                 LoginView()
+                    .preferredColorScheme(userState.appearance == "dark" ? .dark : userState.appearance == "light" ? .light : nil)
             }
         }
         .environment(userState)

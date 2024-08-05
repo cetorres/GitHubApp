@@ -20,6 +20,7 @@ struct ProfileView: View {
                         shouldShowAlert = true
                     }
                 }
+                .environment(userState)
                 .navigationTitle("Profile")
                 .navigationBarTitleDisplayMode(.inline)
                 .actionSheet(isPresented: $shouldShowAlert) {

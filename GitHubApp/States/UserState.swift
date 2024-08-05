@@ -11,6 +11,11 @@ import Observation
 @Observable
 final class UserState {
     private(set) var userLogin: String = ""
+    var appearance: String = "" {
+        didSet {
+            UserDefaults.standard.setValue(appearance, forKey: "appearance")
+        }
+    }
     var isLoading = false
     var isUserLoggedIn: Bool {
         return userLogin != ""
@@ -19,6 +24,9 @@ final class UserState {
     init() {
         if let savedUserLogin = UserDefaults.standard.string(forKey: "userLogin") {
             self.userLogin = savedUserLogin
+        }
+        if let savedAppearance = UserDefaults.standard.string(forKey: "appearance") {
+            self.appearance = savedAppearance
         }
     }
     
