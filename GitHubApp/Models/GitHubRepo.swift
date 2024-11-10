@@ -26,3 +26,29 @@ struct GitHubRepo: Codable, Hashable {
 }
 
 let testRepo = GitHubRepo(id: 1, name: "test-repo", fullName: "user/test-repo", description: "This is a test repo", url: "", htmlUrl: "", homepage: "", language: "JavaScript", defaultBranch: "main", stargazersCount: 0, watchersCount: 0, watchers: 3, forksCount: 0, createdAt: Date(), updatedAt: Date())
+
+struct GitHubRepoContent: Codable {
+    let name, path, sha: String
+    let size: Int
+    let url, htmlUrl: String
+    let gitUrl: String
+    let downloadUrl: String?
+    let type: String
+    let links: Links
+
+    enum CodingKeys: String, CodingKey {
+        case name, path, sha, size, url, htmlUrl, gitUrl, downloadUrl, type
+        case links = "_links"
+    }
+}
+
+struct Links: Codable {
+    let linkSelf: String
+    let git: String
+    let html: String
+
+    enum CodingKeys: String, CodingKey {
+        case linkSelf = "self"
+        case git, html
+    }
+}

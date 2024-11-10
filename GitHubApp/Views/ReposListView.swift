@@ -37,12 +37,7 @@ struct ReposListView: View {
                     .id(repo.id)
                 }
                 .navigationDestination(for: GitHubRepo.self, destination: { repo in
-                    VStack {
-                        Text(repo.name)
-                        Text(repo.description ?? "")
-                    }
-                    .padding()
-                    .navigationBarTitle(repo.name, displayMode: .inline)
+                    RepoView(repo: repo)
                 })
                 .onChange(of: scrollToTop) { _, newState in
                     if newState {
